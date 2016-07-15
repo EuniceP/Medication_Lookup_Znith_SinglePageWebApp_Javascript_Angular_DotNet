@@ -1,0 +1,6 @@
+C:\dev\PHARMA_LOOKUP\Service\bin\Service.dll
+C:\dev\PHARMA_LOOKUP\Service\bin\Service.pdb
+C:\dev\PHARMA_LOOKUP\Service\bin\Newtonsoft.Json.dll
+C:\dev\PHARMA_LOOKUP\Service\obj\Debug\Service.dll
+C:\dev\PHARMA_LOOKUP\Service\obj\Debug\Service.pdb
+C:\dev\PHARMA_LOOKUP\Service\obj\Debug\Service.csprojResolveAssemblyReference.cache
