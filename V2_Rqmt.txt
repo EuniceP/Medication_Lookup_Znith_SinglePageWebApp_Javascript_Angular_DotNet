@@ -1,0 +1,32 @@
+
+•	When Hover over the generic name can it list the unique strengths in alphabetical order for quick reference
+
+
+
+
+
+
+
+•	Keep the Lookup Fields available when scrolling down the page
+
+•	Hyperlink the GPI number to only display that GPI, prevent cut and paste as a GPI search
+
+•	Can excel export in full display vs numbers showing in exponential format?
+
+
+
+•	Split the column select box to selected and available? Or only display what has not been selected.
+
+	o	Column Deletion directly from the table vs going to the select column box.
+
+	o	If column select and available is used then if deleted off display table will move to the available column box
+
+	o	Selected column list will be in the same order as the display chart
+
+
+
+
+
+•	Combine the Therapeutic Group/Class Lookup and Selection, such that only lookup by therapeutic group/class is available then there is a query box above the scroll box
+
+	o	Therapeutic class should have an option of All to mix and match the selection
