@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Pharmaceuticals Lookup</title>
+    <title>Formulary / Pharmaceuticals Lookup</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=EDGE;" />
     <link href="js/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -34,12 +34,12 @@
 
         $(document).ready(function () {
 			CheckBrowser();
-			
+
             //Freeze table header
             $(window).scroll(function () {
                 if ($(window).scrollTop() >= 326) {
                     $('#draggable_header').addClass('fixed');
-                    for (var i = 1; i <= 22; i++) {
+                    for (var i = 1; i <= 24; i++) {
                         $('#Th' + i).width($('#d' + i).width());
                         $('#d' + i).width($('#Th' + i).width());
                     };
@@ -76,7 +76,7 @@
 <body id="pharma" data-ng-app="pharmaLookup"  data-ng-controller="PharmaCtrl" data-ng-init="init()" >  
     <div class="content-fluid no-print" >
         <div id="panel" >
-            <span id="title" style="color:#3b5998">Pharmaceuticals </span> <span style="font-size:24px;color:#8b9dc3;font-weight:700"> Lookup</span>
+            <span id="title" style="color:#3b5998">Formulary / Pharmaceuticals </span> <span style="font-size:20px;color:#8b9dc3;font-weight:700"> Lookup</span>
             <span style="float: right;margin-top: 10px; font-size: 14px">Lookup pharmaceuticals by Therapeutic Class, NDC, GPI, Brand, Product, or Manufacturer.</span>  
             <hr style="margin-top:2px;margin-bottom:6px"/>
             <div class="row">
@@ -186,15 +186,18 @@
                     </form>
                 </div>
                 <div  class="col-sm-2">
-                    <div  style="margin-right:20px">
-                        <div class="list-group-item active" style="background-color:gray;"><strong>&nbsp; Select Columns</strong></div>
-                        <form id="columns" >
-                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.NDC" />NDC</label><br />
-                            <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Name" />Name</label><br />
+                    <div  style="margin-right:15px">
+                       <label style="margin-top:-10px" class="checkbox-inline"><input  type="checkbox"  data-ng-model="showColumnList" style="width:10px" /><span id="columnDisplayLabel">Column List</span></label>
+                       <label style="margin-top:-10px" class="checkbox-inline" data-ng-show="showColumnList"><input id="columnDisplayChk" type="checkbox" data-ng-click="selectAllColumns()"   style="width:10px"/><span id="Span1">Select all</span></label><br />
+                        <div class="list-group-item active" style="background-color:gray;" id="selectcolumns" data-ng-show="showColumnList"><strong>&nbsp; Select Columns</strong></div>
+                        <form id="columns"   data-ng-show="showColumnList">
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.GPI" />GPI</label><br />
+                            <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Therapeutic_Group" />Therapeutic Group</label><br />
+                            <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Name" />Name</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Generic_Name" />Generic Name</label><br />
-                            <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Rx_OTC" />Rx OTC</label><br />
+                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.NDC" />NDC</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Source" />Source</label><br />
+                            <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Rx_OTC" />Rx OTC</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Strength" />Strength</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Manufacturer" />Manufacturer</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Repackage_Code" />Repackaged</label><br />
@@ -210,7 +213,6 @@
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Older_Price_Effective_Date"   />Previous Price Effective Date</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.DEA" />DEA</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Dosage_Form" />Dosage Form</label><br />
-                            <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Therapeutic_Group" />Therapeutic Group</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Therapeutic_Class" />Therapeutic Class</label><br />
                             <label class="checkbox-inline"><input type="checkbox" data-ng-model="showColumns.Name_Type"  />Name Type</label><br />
                         </form>
@@ -221,8 +223,8 @@
     </div>
     <div id="info" class="row-fluid no-print">
         <div data-ng-show="showReport"  style="color:#b30000;margin:10px 0;height:14px">
-            <i class="fa fa-info-circle col-xs-2"> Click NDC# for INGREDIENTS</i>
             <i class="fa fa-search col-xs-2" style="color:red;"> Double-click GPI# to search</i> 
+            <i class="fa fa-info-circle col-xs-2"> Click NDC# for INGREDIENTS</i>
             <span style="text-align:right" class="col-xs-3"><i id="I3" class="fa fa-arrow-right" style="color:#3b5998;"> To MOVE a column, drag above the column name</i></span>
             <span style="text-align:right" class="col-xs-3"><i class="fa fa-usd"> For PRICE HISTORY, click on the PRICE.</i></span>
             <span style="text-align:right" class="col-xs-2"><i id="I1" class="fa fa-sort" style="color:#3b5998;"> To SORT, click the column name</i></span>
@@ -236,93 +238,93 @@
         <table id="pharma_reportTable" class="table table-hover table-condensed" style="border-bottom:none;overflow:scroll">
             <thead>
                 <tr id="draggable_header" >
-                    <th id="Th1" data-ng-show="showColumns.NDC"  class="draggable-row" >
-                        <div class="dragtable-handle"></div>
-                        <div class="header_title" data-ng-click="sortData('ndc')" title="National Drug Code - Unique identifier used in the United States for drugs intended for human use.">NDC  <span class="sortorder"  data-ng-show="predicate === 'ndc'"  data-ng-class="{reverse:reverse}"></span></div>
-                    </th>
-                    <th id="Th2" data-ng-show="showColumns.Name" class="draggable-row">
-                        <div class="dragtable-handle"></div>
-                        <div class="header_title" data-ng-click="sortData('name')" title="Drug Product Name">Name <span class="sortorder"  data-ng-show="predicate === 'name'"  data-ng-class="{reverse:reverse}"></span></div>
-                    </th>
-                    <th id="Th3" data-ng-show="showColumns.GPI"  class="draggable-row">
+                    <th id="Th1" data-ng-show="showColumns.GPI"  class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('gpi')" title="Generic Product Identifier: 14-character hierarchical classification system that identifies drugs from their primary therapeutic use down to the unique interchangeable product regardless of manufacturer or package size.">GPI  <span class="sortorder"  data-ng-show="predicate === 'gpi'"  data-ng-class="{reverse:reverse}"></span></div>
+                    </th>
+                    <th id="Th2" data-ng-show="showColumns.Therapeutic_Group" class="draggable-row">
+                        <div class="dragtable-handle"></div>
+                        <div class="header_title" data-ng-click="sortData('therapeutic_group')" title="Drug group - classifies general drug products">Therapeutic Group  <span class="sortorder"  data-ng-show="predicate === 'therapeutic_group'"  data-ng-class="{reverse:reverse}"></span></div>
+                    </th>
+                    <th id="Th3" data-ng-show="showColumns.Name" class="draggable-row">
+                        <div class="dragtable-handle"></div>
+                        <div class="header_title" data-ng-click="sortData('name')" title="Drug Product Name">Name <span class="sortorder"  data-ng-show="predicate === 'name'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
                     <th id="Th4" data-ng-show="showColumns.Generic_Name" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('generic_name')" title="Generic Product Name">Generic Name  <span class="sortorder"  data-ng-show="predicate === 'generic_name'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th5" data-ng-show="showColumns.Rx_OTC" class="draggable-row">
+                    <th id="Th5" data-ng-show="showColumns.NDC"  class="draggable-row" >
                         <div class="dragtable-handle"></div>
-                        <div class="header_title" data-ng-click="sortData('rx_otc')" title="Indicates federal prescription (Rx) or over-the-counter (OTC) status">RX OTC  <span class="sortorder"  data-ng-show="predicate === 'rx_otc'"  data-ng-class="{reverse:reverse}"></span></div>
+                        <div class="header_title" data-ng-click="sortData('ndc')" title="National Drug Code - Unique identifier used in the United States for drugs intended for human use.">NDC  <span class="sortorder"  data-ng-show="predicate === 'ndc'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
                     <th id="Th6" data-ng-show="showColumns.Source" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('source')" title="Drug available from one labeler (single-source) or multiple labelers(multiple-source)">Source  <span class="sortorder"  data-ng-show="predicate === 'source'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th7" data-ng-show="showColumns.Strength" class="draggable-row">
+                    <th id="Th7" data-ng-show="showColumns.Rx_OTC" class="draggable-row">
+                        <div class="dragtable-handle"></div>
+                        <div class="header_title" data-ng-click="sortData('rx_otc')" title="Indicates federal prescription (Rx) or over-the-counter (OTC) status">RX OTC  <span class="sortorder"  data-ng-show="predicate === 'rx_otc'"  data-ng-class="{reverse:reverse}"></span></div>
+                    </th>
+                    <th id="Th8" data-ng-show="showColumns.Strength" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('strength')" title="Dosage strength as provided by the manufacturer">Strength  <span class="sortorder"  data-ng-show="predicate === 'strength'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th8" data-ng-show="showColumns.Manufacturer" class="draggable-row">
+                    <th id="Th9" data-ng-show="showColumns.Manufacturer" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('manufacturer')" title="Drug manufacturer"> Manufacturer  <span class="sortorder"  data-ng-show="predicate === 'manufacturer'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th9" data-ng-show="showColumns.Repackage_Code" class="draggable-row">
+                    <th id="Th10" data-ng-show="showColumns.Repackage_Code" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('repackage_code')" title="'X' indicates the drug has been repackaged"> Repackage Code  <span class="sortorder"  data-ng-show="predicate === 'repackage_code'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th10" data-ng-show="showColumns.Pkg_Size" class="draggable-row">
+                    <th id="Th11" data-ng-show="showColumns.Pkg_Size" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('pkg_size')" title="Total size of the package in volume or number of units contained">Pkg Size  <span class="sortorder"  data-ng-show="predicate === 'pkg_size'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th11" data-ng-show="showColumns.Pkg_Qty" class="draggable-row">
+                    <th id="Th12" data-ng-show="showColumns.Pkg_Qty" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('pkg_qty')" title="Total Package Quantity (Pkg Size X Pkg Count)">Pkg Qty  <span class="sortorder"  data-ng-show="predicate === 'pkg_qty'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th12" data-ng-show="showColumns.Pkg_Price" class="draggable-row">
+                    <th id="Th3" data-ng-show="showColumns.Pkg_Price" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('pkg_price')" title="Average Wholesale Package Price">Pkg AWP  <span class="sortorder"  data-ng-show="predicate === 'pkg_price'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th13" data-ng-show="showColumns.Pkg_Count" class="draggable-row">
+                    <th id="Th14" data-ng-show="showColumns.Pkg_Count" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('pkg_count')" title="Number of individual containers or units per package">Pkg Count  <span class="sortorder"  data-ng-show="predicate === 'pkg_count'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th14" data-ng-show="showColumns.Unit_Price" class="draggable-row">
+                    <th id="Th15" data-ng-show="showColumns.Unit_Price" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('unit_price')" title="Average Wholesale Unit Price">Unit AWP  <span class="sortorder"  data-ng-show="predicate === 'unit_price'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th15" data-ng-show="showColumns.Price_Effective_Date" class="draggable-row">
+                    <th id="Th16" data-ng-show="showColumns.Price_Effective_Date" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('price_effective_date')" title="Effective date of the price">Price Effective  <span class="sortorder"  data-ng-show="predicate === 'price_effective_date'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th16" data-ng-show="showColumns.GEAP" class="draggable-row">
+                    <th id="Th17" data-ng-show="showColumns.GEAP" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('geap')" title="Generic Equivalent Average Price - Average of AWPs for all multi-source drug products.">GEAP  <span class="sortorder"  data-ng-show="predicate === 'geap'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th17" data-ng-show="showColumns.Older_Unit_Price" class="draggable-row">
+                    <th id="Th18" data-ng-show="showColumns.Older_Unit_Price" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('older_unit_price')">Previous Unit AWP  <span class="sortorder"  data-ng-show="predicate === 'older_unit_price'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th18" data-ng-show="showColumns.Older_Pkg_Price" class="draggable-row">
+                    <th id="Th19" data-ng-show="showColumns.Older_Pkg_Price" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('older_pkg_price')">Previous Pkg AWP  <span class="sortorder"  data-ng-show="predicate === 'older_pkg_price'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th19" data-ng-show="showColumns.Older_Price_Effective_Date" class="draggable-row">
+                    <th id="Th20" data-ng-show="showColumns.Older_Price_Effective_Date" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('older_price_effective_date')">Previous Price Effective  <span class="sortorder"  data-ng-show="predicate === 'older_price_effective_date'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th20" data-ng-show="showColumns.DEA" class="draggable-row">
+                    <th id="Th21" data-ng-show="showColumns.DEA" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('dea')" title="Drug Enforcement Administration Class Code identifies federally controlled substances classified by DEA">DEA  <span class="sortorder"  data-ng-show="predicate === 'dea'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
-                    <th id="Th21" data-ng-show="showColumns.Dosage_Form" class="draggable-row">
+                    <th id="Th22" data-ng-show="showColumns.Dosage_Form" class="draggable-row">
                         <div class="dragtable-handle"></div>
                         <div class="header_title" data-ng-click="sortData('dosage_form')" title="Tablet, Powder, Solution, or Injection">Dosage Form  <span class="sortorder"  data-ng-show="predicate === 'dosage_form'"  data-ng-class="{reverse:reverse}"></span></div>
-                    </th>
-                    <th id="Th22" data-ng-show="showColumns.Therapeutic_Group" class="draggable-row">
-                        <div class="dragtable-handle"></div>
-                        <div class="header_title" data-ng-click="sortData('therapeutic_group')" title="Drug group - classifies general drug products">Therapeutic Group  <span class="sortorder"  data-ng-show="predicate === 'therapeutic_group'"  data-ng-class="{reverse:reverse}"></span></div>
                     </th>
                     <th id="Th23" data-ng-show="showColumns.Therapeutic_Class" class="draggable-row">
                         <div class="dragtable-handle"></div>
@@ -336,28 +338,28 @@
             </thead>
             <tbody id="pharma_reportData" data-ng-repeat="p in pharmaResult | orderBy : predicate : reverse" data-ng-switch on="showPriceHistory[$index] || showIngredient[$index]" >
               <tr> 
-                <td id="d1" data-ng-show="showColumns.NDC" class="clickableColumn"  data-ng-click="displayIngredient ($index, p.ndc)"  title="Click to see ingredients.">&#8203;{{p.ndc}}</td>
-                <td id="d2" data-ng-show="showColumns.Name">{{p.name}}</td>
-                <td id="d3" data-ng-show="showColumns.GPI" class="clickableColumn" data-ng-dblclick="filterByGPI(p.gpi)"  title="Double-click to search by the selected GPI.">&#8203;{{p.gpi}}</td>
+                <td id="d2" data-ng-show="showColumns.GPI" class="clickableColumn" data-ng-dblclick="filterByGPI(p.gpi)"  title="Double-click to search by the selected GPI.">&#8203;{{p.gpi}}</td>
+                <td id="d2" data-ng-show="showColumns.Therapeutic_Group">{{p.therapeutic_group}}</td>
+                <td id="d3" data-ng-show="showColumns.Name">{{p.name}}</td>
                 <td id="d4" data-ng-show="showColumns.Generic_Name"  data-ng-click="displayGenericNames ()"  title="Click to see unique names."><a href="#popup1">{{p.generic_name}}</a></td>
-                <td id="d5" data-ng-show="showColumns.Rx_OTC" class="center">{{p.rx_otc}}</td>
+                <td id="d5" data-ng-show="showColumns.NDC" class="clickableColumn"  data-ng-click="displayIngredient ($index, p.ndc)"  title="Click to see ingredients.">&#8203;{{p.ndc}}</td>
                 <td id="d6" data-ng-show="showColumns.Source">{{p.source}}</td>
-                <td id="d7" data-ng-show="showColumns.Strength" class="number">{{p.strength}}</td>
-                <td id="d8" data-ng-show="showColumns.Manufacturer">{{p.manufacturer}}</td>
-                <td id="d9" data-ng-show="showColumns.Repackage_Code" class="center" title="'X' indicates the drug has been repackaged">{{p.repackage_code}}</td>
-                <td id="d10" data-ng-show="showColumns.Pkg_Size"  class="number">{{p.pkg_size}}</td>
-                <td id="d11" data-ng-show="showColumns.Pkg_Qty"  class="number">{{p.pkg_qty}}</td>
-                <td id="d12" data-ng-show="showColumns.Pkg_Price"  class="number clickableColumn" data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.pkg_price | DisplayNullCurrency}}</td>
-                <td id="d13" data-ng-show="showColumns.Pkg_Count"  class="number">{{p.pkg_count}}</td>
-                <td id="d14" data-ng-show="showColumns.Unit_Price" class="number clickableColumn" data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.unit_price | DisplayNullCurrency}}</td>
-                <td id="d15" data-ng-show="showColumns.Price_Effective_Date" class="center">{{p.price_effective_date | date : 'MM/dd/yyyy' | DisplayNullDate }}</td>
-                <td id="d16" data-ng-show="showColumns.GEAP" class="number">{{p.geap | DisplayNullCurrency}}</td>
-                <td id="d17" data-ng-show="showColumns.Older_Unit_Price" class="number clickableColumn"  data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.older_unit_price | DisplayNullCurrency}}</td>
-                <td id="d18" data-ng-show="showColumns.Older_Pkg_Price"  class="number clickableColumn"  data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.older_pkg_price | DisplayNullCurrency}}</td>
-                <td id="d19" data-ng-show="showColumns.Older_Price_Effective_Date" class="center">{{p.older_price_effective_date | date : 'MM/dd/yyyy' | DisplayNullDate }}</td>
-                <td id="d20" data-ng-show="showColumns.DEA" class="center">{{p.dea}}</td>
-                <td id="d21" data-ng-show="showColumns.Dosage_Form" class="center">{{p.dosage_form}}</td>
-                <td id="d22" data-ng-show="showColumns.Therapeutic_Group">{{p.therapeutic_group}}</td>
+                <td id="d7" data-ng-show="showColumns.Rx_OTC" class="center">{{p.rx_otc}}</td>
+                <td id="d8" data-ng-show="showColumns.Strength" class="number">{{p.strength}}</td>
+                <td id="d9" data-ng-show="showColumns.Manufacturer">{{p.manufacturer}}</td>
+                <td id="d10" data-ng-show="showColumns.Repackage_Code" class="center" title="'X' indicates the drug has been repackaged">{{p.repackage_code}}</td>
+                <td id="d11" data-ng-show="showColumns.Pkg_Size"  class="number">{{p.pkg_size}}</td>
+                <td id="d12" data-ng-show="showColumns.Pkg_Qty"  class="number">{{p.pkg_qty}}</td>
+                <td id="d13" data-ng-show="showColumns.Pkg_Price"  class="number clickableColumn" data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.pkg_price | DisplayNullCurrency}}</td>
+                <td id="d14" data-ng-show="showColumns.Pkg_Count"  class="number">{{p.pkg_count}}</td>
+                <td id="d15" data-ng-show="showColumns.Unit_Price" class="number clickableColumn" data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.unit_price | DisplayNullCurrency}}</td>
+                <td id="d16" data-ng-show="showColumns.Price_Effective_Date" class="center">{{p.price_effective_date | date : 'MM/dd/yyyy' | DisplayNullDate }}</td>
+                <td id="d17" data-ng-show="showColumns.GEAP" class="number">{{p.geap | DisplayNullCurrency}}</td>
+                <td id="d18" data-ng-show="showColumns.Older_Unit_Price" class="number clickableColumn"  data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.older_unit_price | DisplayNullCurrency}}</td>
+                <td id="d19" data-ng-show="showColumns.Older_Pkg_Price"  class="number clickableColumn"  data-ng-click="displayPriceHistory ($index, p.ndc)" title="Click to see price history.">{{p.older_pkg_price | DisplayNullCurrency}}</td>
+                <td id="d20" data-ng-show="showColumns.Older_Price_Effective_Date" class="center">{{p.older_price_effective_date | date : 'MM/dd/yyyy' | DisplayNullDate }}</td>
+                <td id="d21" data-ng-show="showColumns.DEA" class="center">{{p.dea}}</td>
+                <td id="d22" data-ng-show="showColumns.Dosage_Form" class="center">{{p.dosage_form}}</td>
                 <td id="d23" data-ng-show="showColumns.Therapeutic_Class">{{p.therapeutic_class}}</td>
                 <td id="d24" data-ng-show="showColumns.Name_Type">{{p.name_type}}</td>
               </tr>
